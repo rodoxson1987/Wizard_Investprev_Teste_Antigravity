@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wizard de Onboarding de Novo Cliente RPPS [MVP]</title>
+    <!-- Fontes do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="high-fidelity-mode"> <!-- Inicialmente em alta fidelidade -->
+
+    <!-- Header Principal -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>RPPS Onboarder</h1>
+                    <span class="badge">MVP v1.0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-center">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span class="progress-label">Progresso da Implantação</span>
+                    <span class="progress-percent" id="global-progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar-fill" id="global-progress-bar" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <!-- Alternador de Tema (Wireframe vs Alta Fidelidade) -->
+            <div class="theme-switch-container">
+                <span class="theme-label-text wireframe-text">Wireframe</span>
+                <label class="switch-toggle">
+                    <input type="checkbox" id="theme-toggle" checked>
+                    <span class="slider-round"></span>
+                </label>
+                <span class="theme-label-text hifi-text">Alta Fidelidade</span>
+            </div>
+
+            <!-- Botões de Ação Auxiliares -->
+            <button class="btn btn-outline" id="btn-save-progress" title="Salvar progresso no navegador">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                <span>Salvar</span>
+            </button>
+            <button class="btn btn-outline btn-danger-outline" id="btn-reset" title="Limpar todos os dados">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Layout Principal -->
+    <main class="app-layout">
+        <!-- Sidebar - Navegação dos Passos -->
+        <aside class="sidebar">
+            <!-- Pré-Configurações -->
+            <div class="sidebar-section-label">Parametrizações Base</div>
+            <nav class="steps-nav steps-nav--pre">
+                <button class="step-btn module-btn" data-module="banks" id="module-nav-banks">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                    <div class="step-details">
+                        <div class="step-title">Bancos e Instituições</div>
+                        <div class="step-desc">Catálogo CMN 5.272</div>
+                    </div>
+                </button>
+                <button class="step-btn module-btn" data-module="assets" id="module-nav-assets">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                    </div>
+                    <div class="step-details">
+                        <div class="step-title">Ativos Financeiros</div>
+                        <div class="step-desc">Catálogo CMN 5.272/CVM</div>
+                    </div>
+                </button>
+            </nav>
+            <div class="sidebar-section-label" style="margin-top:8px;">Etapas de Implantação</div>
+            <nav class="steps-nav">
+                <!-- Passo 1 -->
+                <button class="step-btn active" data-step="1" id="step-nav-1">
+                    <div class="step-icon">
+                        <span class="step-number">1</span>
+                        <svg class="step-check-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="step-details">
+                        <div class="step-title">Dados do RPPS</div>
+                        <div class="step-desc">Configuração Institucional</div>
+                    </div>
+                </button>
+
+                <!-- Passo 2 -->
+                <button class="step-btn locked" data-step="2" id="step-nav-2" disabled>
+                    <div class="step-icon">
+                        <span class="step-number">2</span>
+                        <svg class="step-check-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="step-details">
+                        <div class="step-title">Usuários & Perfis</div>
+                        <div class="step-desc">Acessos Iniciais</div>
+                    </div>
+                </button>
+
+                <!-- Passo 3 -->
+                <button class="step-btn locked" data-step="3" id="step-nav-3" disabled>
+                    <div class="step-icon">
+                        <span class="step-number">3</span>
+                        <svg class="step-check-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="step-details">
+                        <div class="step-title">Histórico de Ativos</div>
+                        <div class="step-desc">Upload e Validação</div>
+                    </div>
+                </button>
+
+                <!-- Passo 4 -->
+                <button class="step-btn locked" data-step="4" id="step-nav-4" disabled>
+                    <div class="step-icon">
+                        <span class="step-number">4</span>
+                        <svg class="step-check-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="step-details">
+                        <div class="step-title">PAI Vigente</div>
+                        <div class="step-desc">Limites CMN 4.963</div>
+                    </div>
+                </button>
+
+                <!-- Passo 5 -->
+                <button class="step-btn locked" data-step="5" id="step-nav-5" disabled>
+                    <div class="step-icon">
+                        <span class="step-number">5</span>
+                        <svg class="step-check-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="step-details">
+                        <div class="step-title">Contas Correntes</div>
+                        <div class="step-desc">Saldos Bancários</div>
+                    </div>
+                </button>
+
+                <!-- Passo 6 -->
+                <button class="step-btn locked" data-step="6" id="step-nav-6" disabled>
+                    <div class="step-icon">
+                        <span class="step-number">6</span>
+                        <svg class="step-check-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="step-details">
+                        <div class="step-title">Validação Final</div>
+                        <div class="step-desc">Relatório de Status</div>
+                    </div>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>Meta de Implantação: <span class="highlight">&lt; 8h</span></p>
+                <div class="status-indicator">
+                    <span class="status-dot green"></span>
+                    <span class="status-text">Banco de Dados Ativo</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Área de Conteúdo Central -->
+        <section class="main-content">
+
+            <!-- ================= PASSO 1: CONFIGURAÇÃO DO RPPS ================= -->
+            <div class="step-pane active" id="step-pane-1">
+                <div class="pane-header">
+                    <h2>Configuração do RPPS</h2>
+                    <p class="subtitle">Insira as informações cadastrais básicas e contatos institucionais do Regime Próprio.</p>
+                </div>
+
+                <form id="form-step-1" class="wizard-form">
+                    <div class="form-grid">
+                        <div class="form-group col-8">
+                            <label for="rpps-nome">Nome do RPPS <span class="required">*</span></label>
+                            <input type="text" id="rpps-nome" placeholder="Ex: Instituto de Previdência dos Servidores de Cidade Nova" required>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="rpps-cnpj">CNPJ <span class="required">*</span></label>
+                            <input type="text" id="rpps-cnpj" placeholder="00.000.000/0001-00" required>
+                        </div>
+
+                        <div class="form-group col-4">
+                            <label for="rpps-ente-estado">Ente Federativo (Estado) <span class="required">*</span></label>
+                            <select id="rpps-ente-estado" required>
+                                <option value="">Selecione...</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="rpps-ente-municipio">Município <span class="required">*</span></label>
+                            <input type="text" id="rpps-ente-municipio" placeholder="Ex: Cidade Nova" required>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="rpps-progestao">Nível Pró-Gestão Vigente <span class="required">*</span></label>
+                            <select id="rpps-progestao" required>
+                                <option value="Não Aderido">Não Aderido</option>
+                                <option value="Nível I">Nível I</option>
+                                <option value="Nível II">Nível II</option>
+                                <option value="Nível III">Nível III</option>
+                                <option value="Nível IV">Nível IV</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-12">
+                            <label>Planos Existentes <span class="required">*</span></label>
+                            <div class="checkbox-group flex-row">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="plano-civil" checked>
+                                    <span class="checkmark"></span>
+                                    Plano Previdenciário (Civil)
+                                </label>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="plano-militar">
+                                    <span class="checkmark"></span>
+                                    Plano Financeiro (Militar / Segregação)
+                                </label>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="plano-taxa" checked>
+                                    <span class="checkmark"></span>
+                                    Taxa de Administração (Gestão)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sessão de Contatos de Responsáveis -->
+                    <div class="section-divider"></div>
+                    <div class="contacts-section-header">
+                        <h3>Contatos dos Responsáveis</h3>
+                        <p class="subtitle">Adicione as principais pessoas de contato do RPPS (Diretor, Gestor de Recursos, etc.)</p>
+                    </div>
+
+                    <div class="form-row-add-contact card-panel">
+                        <div class="form-group col-3">
+                            <label for="contact-name">Nome Completo</label>
+                            <input type="text" id="contact-name" placeholder="Ex: Maria Oliveira">
+                        </div>
+                        <div class="form-group col-3">
+                            <label for="contact-email">E-mail</label>
+                            <input type="email" id="contact-email" placeholder="maria@rpps.gov.br">
+                        </div>
+                        <div class="form-group col-3">
+                            <label for="contact-phone">Telefone</label>
+                            <input type="text" id="contact-phone" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group col-2">
+                            <label for="contact-role">Cargo</label>
+                            <select id="contact-role">
+                                <option value="Diretor Presidente">Diretor Presidente</option>
+                                <option value="Gestor de Recursos">Gestor de Recursos</option>
+                                <option value="Membro do Comitê">Membro do Comitê</option>
+                                <option value="Analista Financeiro">Analista Financeiro</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-1 align-self-end">
+                            <button type="button" class="btn btn-primary btn-full-width" id="btn-add-contact" style="padding: 10px 0;">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Contatos Adicionados -->
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-contacts">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Telefone</th>
+                                    <th>Cargo</th>
+                                    <th style="width: 80px; text-align: center;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contacts-list">
+                                <!-- Preenchido dinamicamente via JS -->
+                                <tr class="empty-state-row">
+                                    <td colspan="5">Nenhum responsável cadastrado ainda. Use o formulário acima para adicionar.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ================= PASSO 2: USUÁRIOS E PERFIS ================= -->
+            <div class="step-pane hidden" id="step-pane-2">
+                <div class="pane-header">
+                    <h2>Configuração de Usuários e Perfis</h2>
+                    <p class="subtitle">Cadastre os usuários internos e atribua os perfis de acesso adequados. Eles receberão um convite por e-mail.</p>
+                </div>
+
+                <div class="wizard-form">
+                    <div class="form-row-add-contact card-panel">
+                        <div class="form-group col-4">
+                            <label for="user-name">Nome Completo</label>
+                            <input type="text" id="user-name" placeholder="Ex: Roberto Carlos">
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="user-email">E-mail Corporativo</label>
+                            <input type="email" id="user-email" placeholder="roberto.carlos@rpps.gov.br">
+                        </div>
+                        <div class="form-group col-3">
+                            <label for="user-profile">Perfil de Acesso</label>
+                            <select id="user-profile">
+                                <option value="Administrador">Administrador (Acesso Total)</option>
+                                <option value="Gestor">Gestor de Investimentos</option>
+                                <option value="Conselheiro">Membro do Conselho</option>
+                                <option value="Consultor">Consultor de Implantação</option>
+                                <option value="Leitura">Apenas Leitura</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-1 align-self-end">
+                            <button type="button" class="btn btn-primary btn-full-width" id="btn-add-user" style="padding: 10px 0;">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Informativo de Perfis -->
+                    <div class="alert alert-info">
+                        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <div class="alert-content">
+                            <strong>Dica de Implantação:</strong> Usuários com perfil de <em>Administrador</em> e <em>Gestor</em> têm permissão para assinar atas de comitê e alterar a PAI. Consultores externos de implantação devem preferencialmente ser cadastrados com perfil de <em>Consultor</em>.
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-users">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Perfil</th>
+                                    <th>Status de Convite</th>
+                                    <th style="width: 80px; text-align: center;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-list">
+                                <!-- Preenchido dinamicamente via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= PASSO 3: IMPORTAÇÃO DE HISTÓRICO DE ATIVOS ================= -->
+            <div class="step-pane hidden" id="step-pane-3">
+                <div class="pane-header">
+                    <h2>Importação de Histórico de Ativos</h2>
+                    <p class="subtitle">Realize o upload da carteira de investimentos atual do RPPS. O sistema fará o mapeamento automático dos ativos.</p>
+                </div>
+
+                <div class="wizard-form">
+                    <!-- Grid de Upload -->
+                    <div class="upload-grid">
+                        <div class="upload-zone" id="upload-zone">
+                            <input type="file" id="file-input" class="hidden" accept=".csv,.xlsx,.xls">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <h3>Arraste o arquivo da carteira aqui</h3>
+                            <p>Ou clique para selecionar o arquivo em seu computador (.xlsx, .csv)</p>
+                            <span class="file-limits">Limite de 10MB por arquivo</span>
+                        </div>
+
+                        <div class="upload-instructions">
+                            <h3>Instruções de Importação</h3>
+                            <p>Para garantir que o onboarding seja concluído de forma ágil, utilize a nossa planilha modelo predefinida. Ela já conta com os campos necessários para validação e cruzamento regulatório.</p>
+                            
+                            <a href="#" class="btn btn-outline btn-full-width" id="btn-download-template">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Baixar Planilha Modelo (.csv)
+                            </a>
+
+                            <div class="validation-requirements-box">
+                                <h4>Campos Obrigatórios:</h4>
+                                <ul>
+                                    <li><strong>CNPJ do Ativo</strong> (identificação do fundo/papel)</li>
+                                    <li><strong>Nome do Ativo</strong></li>
+                                    <li><strong>Saldo Atual (R$)</strong></li>
+                                    <li><strong>Plano Vinculado</strong> (Previdenciário ou Financeiro)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra de progresso de simulação de Upload -->
+                    <div class="upload-progress-container hidden" id="upload-progress-container">
+                        <div class="progress-info">
+                            <span class="file-name" id="uploaded-file-name">carteira_investimentos_rpps.csv</span>
+                            <span class="progress-percent" id="upload-percent">0%</span>
+                        </div>
+                        <div class="progress-bar-wrapper">
+                            <div class="progress-bar-fill" id="upload-progress-bar" style="width: 0%;"></div>
+                        </div>
+                        <span class="status-text text-muted" id="upload-status-text">Processando registros e validando limites...</span>
+                    </div>
+
+                    <!-- Listagem de Ativos Importados com Status de Validação -->
+                    <div class="assets-preview-container hidden" id="assets-preview-container">
+                        <div class="section-divider"></div>
+                        <div class="preview-header">
+                            <h3>Ativos Importados da Carteira (<span id="assets-count">0</span> ativos detectados)</h3>
+                            <div class="summary-pills">
+                                <span class="pill pill-success" id="count-assets-ok">0 Válidos</span>
+                                <span class="pill pill-warning" id="count-assets-warning">0 Com Alerta</span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome do Ativo</th>
+                                        <th>CNPJ</th>
+                                        <th>Plano</th>
+                                        <th>Saldo Atual (R$)</th>
+                                        <th>Mapeamento Regulatório</th>
+                                        <th style="text-align: center; width: 140px;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="assets-preview-list">
+                                    <!-- Preenchido via JS após simulação de upload -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= PASSO 4: CONFIGURAÇÃO DA PAI VIGENTE ================= -->
+            <div class="step-pane hidden" id="step-pane-4">
+                <div class="pane-header">
+                    <h2>Configuração da PAI Vigente</h2>
+                    <p class="subtitle">Preencha os limites percentuais de alocação propostos pela Política Anual de Investimentos. O sistema validará automaticamente os limites máximos estabelecidos pela Resolução CMN nº 4.963.</p>
+                </div>
+
+                <div class="wizard-form">
+                    <div class="pai-meta-info card-panel">
+                        <div class="form-group col-4">
+                            <label for="pai-ano">Exercício Vigente da PAI</label>
+                            <select id="pai-ano">
+                                <option value="2026">2026 (Ano Atual)</option>
+                                <option value="2027">2027 (Planejamento)</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-8">
+                            <label>Limites Consolidados e Status da PAI</label>
+                            <div class="pai-status-summary">
+                                <div class="status-summary-item">
+                                    <span class="label">Soma da Alocação:</span>
+                                    <span class="value" id="pai-total-sum">0.00%</span>
+                                </div>
+                                <div class="status-summary-item">
+                                    <span class="label">Status:</span>
+                                    <span class="value-badge badge-warning" id="pai-status-badge">Soma deve ser 100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Alocação da PAI com limites CMN -->
+                    <div class="table-responsive">
+                        <table class="data-table pai-grid-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 120px;">Artigo CMN</th>
+                                    <th>Tipo de Ativo / Segmento de Aplicação</th>
+                                    <th style="width: 140px; text-align: right;">Limite CMN (%)</th>
+                                    <th style="width: 160px; text-align: center;">Meta Proposta PAI (%)</th>
+                                    <th style="width: 200px;">Validação de Limites</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Renda Fixa -->
+                                <tr class="table-group-header">
+                                    <td colspan="5">Segmento de Renda Fixa (Artigo 7º)</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">Art. 7º, I, "a"</td>
+                                    <td>Títulos Públicos Federais (Custódia Direta)</td>
+                                    <td class="text-right font-mono">100.00%</td>
+                                    <td class="text-center">
+                                        <div class="input-percent-wrapper">
+                                            <input type="number" step="0.01" min="0" max="100" class="input-pai-val font-mono" data-art="7-1-a" data-limit="100" value="0.00">
+                                            <span class="percent-suffix">%</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="validation-msg text-success" id="val-7-1-a">✓ Dentro do limite</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">Art. 7º, I, "b"</td>
+                                    <td>Fundos de Investimento RF (Títulos Públicos)</td>
+                                    <td class="text-right font-mono">100.00%</td>
+                                    <td class="text-center">
+                                        <div class="input-percent-wrapper">
+                                            <input type="number" step="0.01" min="0" max="100" class="input-pai-val font-mono" data-art="7-1-b" data-limit="100" value="0.00">
+                                            <span class="percent-suffix">%</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="validation-msg text-success" id="val-7-1-b">✓ Dentro do limite</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">Art. 7º, III, "a"</td>
+                                    <td>Fundos de Renda Fixa (Geral / Crédito Privado)</td>
+                                    <td class="text-right font-mono">60.00%</td>
+                                    <td class="text-center">
+                                        <div class="input-percent-wrapper">
+                                            <input type="number" step="0.01" min="0" max="100" class="input-pai-val font-mono" data-art="7-3-a" data-limit="60" value="0.00">
+                                            <span class="percent-suffix">%</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="validation-msg text-success" id="val-7-3-a">✓ Dentro do limite</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">Art. 7º, IV</td>
+                                    <td>Fundos de Investimento RF (Debêntures e outros)</td>
+                                    <td class="text-right font-mono">20.00%</td>
+                                    <td class="text-center">
+                                        <div class="input-percent-wrapper">
+                                            <input type="number" step="0.01" min="0" max="100" class="input-pai-val font-mono" data-art="7-4" data-limit="20" value="0.00">
+                                            <span class="percent-suffix">%</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="validation-msg text-success" id="val-7-4">✓ Dentro do limite</span></td>
+                                </tr>
+
+                                <!-- Renda Variável -->
+                                <tr class="table-group-header">
+                                    <td colspan="5">Segmento de Renda Variável (Artigo 8º)</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">Art. 8º, I</td>
+                                    <td>Fundos de Investimento Renda Variável (Ações)</td>
+                                    <td class="text-right font-mono">30.00%</td>
+                                    <td class="text-center">
+                                        <div class="input-percent-wrapper">
+                                            <input type="number" step="0.01" min="0" max="100" class="input-pai-val font-mono" data-art="8-1" data-limit="30" value="0.00">
+                                            <span class="percent-suffix">%</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="validation-msg text-success" id="val-8-1">✓ Dentro do limite</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">Art. 8º, II</td>
+                                    <td>Fundos de Investimento Multimercado (FIM)</td>
+                                    <td class="text-right font-mono">15.00%</td>
+                                    <td class="text-center">
+                                        <div class="input-percent-wrapper">
+                                            <input type="number" step="0.01" min="0" max="100" class="input-pai-val font-mono" data-art="8-2" data-limit="15" value="0.00">
+                                            <span class="percent-suffix">%</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="validation-msg text-success" id="val-8-2">✓ Dentro do limite</span></td>
+                                </tr>
+
+                                <!-- Investimentos no Exterior -->
+                                <tr class="table-group-header">
+                                    <td colspan="5">Segmento no Exterior (Artigo 9º-A)</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-mono">Art. 9º-A, III</td>
+                                    <td>Fundos de Investimento no Exterior (BDR-FI/FIEX)</td>
+                                    <td class="text-right font-mono">10.00%</td>
+                                    <td class="text-center">
+                                        <div class="input-percent-wrapper">
+                                            <input type="number" step="0.01" min="0" max="100" class="input-pai-val font-mono" data-art="9-a" data-limit="10" value="0.00">
+                                            <span class="percent-suffix">%</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="validation-msg text-success" id="val-9-a">✓ Dentro do limite</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= PASSO 5: CADASTRO DE CONTAS CORRENTES ================= -->
+            <div class="step-pane hidden" id="step-pane-5">
+                <div class="pane-header">
+                    <h2>Cadastro de Contas Correntes</h2>
+                    <p class="subtitle">Registre as contas correntes bancárias ativas e seus respectivos saldos de abertura para conciliação das cotas e recursos do RPPS.</p>
+                </div>
+
+                <div class="wizard-form">
+                    <!-- Formulário para adicionar conta -->
+                    <div class="form-row-add-contact card-panel">
+                        <div class="form-group col-3">
+                            <label for="acc-bank">Banco</label>
+                            <select id="acc-bank">
+                                <option value="Banco do Brasil">Banco do Brasil</option>
+                                <option value="Caixa Econômica Federal">Caixa Econômica Federal</option>
+                                <option value="Bradesco">Bradesco</option>
+                                <option value="Itaú Unibanco">Itaú Unibanco</option>
+                                <option value="Santander">Santander</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-2">
+                            <label for="acc-agency">Agência</label>
+                            <input type="text" id="acc-agency" placeholder="Ex: 1234-5">
+                        </div>
+                        <div class="form-group col-2">
+                            <label for="acc-number">Conta Corrente</label>
+                            <input type="text" id="acc-number" placeholder="Ex: 12345-6">
+                        </div>
+                        <div class="form-group col-3">
+                            <label for="acc-plan">Vínculo de Recursos</label>
+                            <select id="acc-plan">
+                                <option value="Plano Previdenciário">Plano Previdenciário</option>
+                                <option value="Plano Financeiro">Plano Financeiro</option>
+                                <option value="Taxa de Administração">Taxa de Administração</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-2">
+                            <label for="acc-balance">Saldo Inicial (R$)</label>
+                            <input type="text" id="acc-balance" placeholder="Ex: 1.500.000,00">
+                        </div>
+                        <div class="form-group col-12 text-right" style="margin-top: 10px;">
+                            <button type="button" class="btn btn-primary" id="btn-add-account">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                Registrar Conta
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de contas correntes cadastradas -->
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-accounts">
+                            <thead>
+                                <tr>
+                                    <th>Banco</th>
+                                    <th>Agência</th>
+                                    <th>Conta Corrente</th>
+                                    <th>Recurso Vinculado</th>
+                                    <th class="text-right">Saldo de Abertura</th>
+                                    <th style="width: 80px; text-align: center;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accounts-list">
+                                <!-- Dinâmico via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Card Informativo de Saldo Consolidado -->
+                    <div class="summary-cards-row">
+                        <div class="summary-card">
+                            <span class="card-label">Total em Contas de Depósito:</span>
+                            <span class="card-val font-mono" id="sum-accounts-balance">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= MÓDULO: CADASTRO DE BANCOS E INSTITUIÇÕES [CAD-01] ================= -->
+            <div class="step-pane hidden" id="module-pane-banks">
+                <div class="pane-header">
+                    <div class="pane-header-top">
+                        <button class="btn btn-outline btn-sm" id="btn-back-from-banks">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            Voltar ao Wizard
+                        </button>
+                    </div>
+                    <h2>Bancos e Instituições Financeiras <span class="badge badge-cad">CAD-01</span></h2>
+                    <p class="subtitle">Catálogo de instituições financeiras autorizadas. Conforme a Resolução CMN 5.272/2025, apenas instituições dos segmentos <strong>S1</strong> e <strong>S2</strong> (classificação prudencial do BCB) são elegíveis para receber recursos do RPPS via aportes diretos em contas correntes.</p>
+                </div>
+
+                <div class="wizard-form">
+                    <!-- Alertas Regulatórios -->
+                    <div class="regulation-banner">
+                        <div class="reg-item reg-eligible">
+                            <span class="reg-badge s1">S1</span>
+                            <div>
+                                <strong>Segmento 1 — Elegível</strong>
+                                <p>Bancos de grande porte (ativos ≥ R$ 500 bi ou com atividade internacional significativa). Sem restrições para aportes do RPPS.</p>
+                            </div>
+                        </div>
+                        <div class="reg-item reg-eligible">
+                            <span class="reg-badge s2">S2</span>
+                            <div>
+                                <strong>Segmento 2 — Elegível</strong>
+                                <p>Bancos de médio-grande porte (ativos ≥ R$ 100 bi e < R$ 500 bi). Elegíveis para aportes do RPPS.</p>
+                            </div>
+                        </div>
+                        <div class="reg-item reg-blocked">
+                            <span class="reg-badge s3">S3</span>
+                            <div>
+                                <strong>Segmento 3 — Vedado para aportes</strong>
+                                <p>Bancos de médio porte. Não elegíveis para conta corrente de recursos previdenciários conforme CMN 5.272.</p>
+                            </div>
+                        </div>
+                        <div class="reg-item reg-blocked">
+                            <span class="reg-badge s4">S4/S5</span>
+                            <div>
+                                <strong>Segmentos 4 e 5 — Vedados</strong>
+                                <p>Instituições de pequeno porte. Não elegíveis para custódia de recursos do RPPS.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra de Busca e Filtros -->
+                    <div class="banks-filter-bar card-panel">
+                        <div class="form-group col-5">
+                            <label for="bank-search">Buscar Instituição</label>
+                            <div class="input-with-icon">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <input type="text" id="bank-search" placeholder="Nome, CNPJ ou código COMPE...">
+                            </div>
+                        </div>
+                        <div class="form-group col-3">
+                            <label for="bank-filter-segment">Filtrar por Segmento</label>
+                            <select id="bank-filter-segment">
+                                <option value="">Todos os Segmentos</option>
+                                <option value="S1">S1 — Elegível</option>
+                                <option value="S2">S2 — Elegível</option>
+                                <option value="S3">S3 — Vedado</option>
+                                <option value="S4">S4 — Vedado</option>
+                                <option value="S5">S5 — Vedado</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-2">
+                            <label for="bank-filter-eligibility">Elegibilidade</label>
+                            <select id="bank-filter-eligibility">
+                                <option value="">Todas</option>
+                                <option value="eligible">Somente Elegíveis</option>
+                                <option value="blocked">Somente Vedados</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-2 align-self-end">
+                            <span class="bank-count-label">Exibindo: <strong id="banks-visible-count">0</strong> instituições</span>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Bancos -->
+                    <div class="table-responsive">
+                        <table class="data-table banks-table" id="table-banks">
+                            <thead>
+                                <tr>
+                                    <th style="width:70px;">COMPE</th>
+                                    <th style="width:110px;">ISPB</th>
+                                    <th>Razão Social</th>
+                                    <th style="width:160px;">CNPJ</th>
+                                    <th style="width:80px;text-align:center;">Segmento</th>
+                                    <th style="width:160px;text-align:center;">Elegibilidade RPPS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="banks-list">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Nota Regulatória -->
+                    <div class="alert alert-info" style="margin-top:16px;">
+                        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <div class="alert-content">
+                            <strong>Base Regulatória:</strong> A classificação S1–S5 é estabelecida pelo Banco Central do Brasil conforme Resolução nº 4.553/2017. O catálogo abaixo é atualizado trimestralmente a partir da lista oficial do BCB. O sistema bloqueará automaticamente o cadastro de conta corrente em instituições S3, S4 ou S5 no Passo 5 deste wizard.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= MÓDULO: CADASTRO DE ATIVOS FINANCEIROS [CAD-02] ================= -->
+            <div class="step-pane hidden" id="module-pane-assets">
+                <div class="pane-header">
+                    <div class="pane-header-top">
+                        <button class="btn btn-outline btn-sm" id="btn-back-from-assets">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            Voltar ao Wizard
+                        </button>
+                    </div>
+                    <h2>Ativos Financeiros <span class="badge badge-cad">CAD-02</span></h2>
+                    <p class="subtitle">Cadastro de ativos financeiros elegíveis conforme <strong>CMN 5.272/2025</strong> e <strong>CVM 175</strong>. MVP contempla quatro grupos: Fundos de Investimento, Títulos Públicos Federais, Títulos Privados de Renda Fixa e Empréstimos Consignados.</p>
+                </div>
+
+                <div class="wizard-form">
+                    <!-- Abas de Tipo de Ativo -->
+                    <div class="asset-tabs">
+                        <button class="asset-tab active" data-tab="fundos" id="tab-fundos">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Fundos de Investimento
+                        </button>
+                        <button class="asset-tab" data-tab="titulos-publicos" id="tab-titulos-publicos">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            Títulos Públicos
+                        </button>
+                        <button class="asset-tab" data-tab="titulos-privados" id="tab-titulos-privados">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            Títulos Privados RF
+                        </button>
+                        <button class="asset-tab" data-tab="consignados" id="tab-consignados">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            Consignados
+                        </button>
+                    </div>
+
+                    <!-- ========== FORMULÁRIO: FUNDOS DE INVESTIMENTO ========== -->
+                    <div class="asset-tab-panel active" id="panel-fundos">
+                        <div class="card-panel">
+                            <div class="lookup-bar">
+                                <div class="form-group" style="flex:1;margin-bottom:0;">
+                                    <label for="fund-cnpj-lookup">Busca por CNPJ do Fundo <span class="badge-auto">Busca Automática CVM</span></label>
+                                    <input type="text" id="fund-cnpj-lookup" placeholder="00.000.000/0001-00 — CNPJ do fundo para consulta automática">
+                                </div>
+                                <button type="button" class="btn btn-primary" id="btn-fund-lookup" style="align-self:flex-end;">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                    Consultar CVM
+                                </button>
+                            </div>
+                            <div class="lookup-status hidden" id="fund-lookup-status"></div>
+
+                            <div class="section-divider" style="margin:16px 0;"></div>
+
+                            <div class="form-grid">
+                                <div class="form-group col-8">
+                                    <label for="fund-nome">Denominação do Fundo <span class="required">*</span></label>
+                                    <input type="text" id="fund-nome" placeholder="Ex: BB Previdenciário RF IRF-M1 FI">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="fund-cnpj">CNPJ do Fundo <span class="required">*</span></label>
+                                    <input type="text" id="fund-cnpj" placeholder="00.000.000/0001-00">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="fund-gestor">Gestor</label>
+                                    <input type="text" id="fund-gestor" placeholder="Ex: BB DTVM">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="fund-admin">Administrador</label>
+                                    <input type="text" id="fund-admin" placeholder="Ex: BTG Pactual Serviços Financeiros">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="fund-class-cvm">Classificação CVM <span class="required">*</span></label>
+                                    <select id="fund-class-cvm">
+                                        <option value="">Selecione...</option>
+                                        <option value="RF — Renda Fixa">RF — Renda Fixa</option>
+                                        <option value="RF — Crédito Privado">RF — Crédito Privado</option>
+                                        <option value="Multimercado">Multimercado</option>
+                                        <option value="Ações">Ações</option>
+                                        <option value="Cambial">Cambial</option>
+                                        <option value="Previdenciário">Previdenciário</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="fund-benchmark">Benchmark de Referência</label>
+                                    <select id="fund-benchmark">
+                                        <option value="CDI">CDI</option>
+                                        <option value="IPCA">IPCA</option>
+                                        <option value="IPCA+">IPCA+</option>
+                                        <option value="IMA-B">IMA-B</option>
+                                        <option value="IMA-B 5">IMA-B 5</option>
+                                        <option value="IRF-M 1">IRF-M 1</option>
+                                        <option value="IRF-M">IRF-M</option>
+                                        <option value="Ibovespa">Ibovespa</option>
+                                        <option value="IGP-M">IGP-M</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="fund-segmento">Segmento CMN 5.272 <span class="required">*</span></label>
+                                    <select id="fund-segmento">
+                                        <option value="">Selecione...</option>
+                                        <option value="Art. 7º I-a — Títulos Públicos">Art. 7º I-a — Títulos Públicos</option>
+                                        <option value="Art. 7º I-b — FI Títulos Públicos">Art. 7º I-b — FI Títulos Públicos</option>
+                                        <option value="Art. 7º III-a — RF Crédito Privado">Art. 7º III-a — RF Crédito Privado</option>
+                                        <option value="Art. 7º IV — Debêntures">Art. 7º IV — Debêntures</option>
+                                        <option value="Art. 8º I — Renda Variável">Art. 8º I — Renda Variável</option>
+                                        <option value="Art. 8º II — Multimercado">Art. 8º II — Multimercado</option>
+                                        <option value="Art. 9º-A — Exterior">Art. 9º-A — Exterior</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="fund-taxa-adm">Taxa de Administração (% a.a.)</label>
+                                    <input type="number" id="fund-taxa-adm" step="0.001" min="0" placeholder="0.000">
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="fund-taxa-perf">Taxa de Performance</label>
+                                    <input type="text" id="fund-taxa-perf" placeholder="Ex: 20% sobre IPCA+">
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="fund-custodiante">Instituição Custodiante</label>
+                                    <select id="fund-custodiante">
+                                        <option value="">Selecione (S1/S2)...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="fund-data-inicio">Data de Início da Posição</label>
+                                    <input type="date" id="fund-data-inicio">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="btn-add-fund">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                    Registrar Fundo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== FORMULÁRIO: TÍTULOS PÚBLICOS FEDERAIS ========== -->
+                    <div class="asset-tab-panel hidden" id="panel-titulos-publicos">
+                        <div class="card-panel">
+                            <div class="tp-tipo-selector">
+                                <label>Tipo de Título Público <span class="required">*</span></label>
+                                <div class="tipo-btn-group" id="tp-tipo-group">
+                                    <button type="button" class="tipo-btn active" data-tipo="LFT">LFT<span>Tesouro SELIC</span></button>
+                                    <button type="button" class="tipo-btn" data-tipo="LTN">LTN<span>Prefixado</span></button>
+                                    <button type="button" class="tipo-btn" data-tipo="NTN-B">NTN-B<span>IPCA+ c/ Juros</span></button>
+                                    <button type="button" class="tipo-btn" data-tipo="NTN-B Principal">NTN-B P<span>IPCA+</span></button>
+                                    <button type="button" class="tipo-btn" data-tipo="NTN-F">NTN-F<span>Prefixado c/ Juros</span></button>
+                                </div>
+                            </div>
+                            <div class="form-grid" style="margin-top:16px;">
+                                <div class="form-group col-4">
+                                    <label for="tp-codigo-selic">Código SELIC</label>
+                                    <input type="text" id="tp-codigo-selic" placeholder="Ex: 760199">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="tp-vencimento">Data de Vencimento <span class="required">*</span></label>
+                                    <input type="date" id="tp-vencimento">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="tp-data-inicio">Data de Início da Posição</label>
+                                    <input type="date" id="tp-data-inicio">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="tp-taxa-compra">Taxa de Compra (% a.a.) <span class="required">*</span></label>
+                                    <input type="number" id="tp-taxa-compra" step="0.0001" placeholder="Ex: 5.8200">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="tp-valor-nominal">Valor Nominal Atualizado (R$)</label>
+                                    <input type="text" id="tp-valor-nominal" placeholder="Ex: 3.765,42">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="tp-benchmark">Benchmark de Referência</label>
+                                    <select id="tp-benchmark">
+                                        <option value="SELIC">SELIC</option>
+                                        <option value="IPCA">IPCA</option>
+                                        <option value="Prefixado">Prefixado</option>
+                                        <option value="IMA-B">IMA-B</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="btn-add-tp">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                    Registrar Título Público
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== FORMULÁRIO: TÍTULOS PRIVADOS RF ========== -->
+                    <div class="asset-tab-panel hidden" id="panel-titulos-privados">
+                        <div class="card-panel">
+                            <div class="tp-tipo-selector">
+                                <label>Tipo de Título Privado <span class="required">*</span></label>
+                                <div class="tipo-btn-group" id="priv-tipo-group">
+                                    <button type="button" class="tipo-btn active" data-tipo="CDB">CDB<span>Cert. Dep. Bancário</span></button>
+                                    <button type="button" class="tipo-btn" data-tipo="LCI">LCI<span>Letra Crédito Imob.</span></button>
+                                    <button type="button" class="tipo-btn" data-tipo="LCA">LCA<span>Letra Crédito Agro.</span></button>
+                                    <button type="button" class="tipo-btn" data-tipo="LF">LF<span>Letra Financeira</span></button>
+                                </div>
+                            </div>
+                            <div class="form-grid" style="margin-top:16px;">
+                                <div class="form-group col-6">
+                                    <label for="priv-emissor">Emissor (Razão Social) <span class="required">*</span></label>
+                                    <select id="priv-emissor">
+                                        <option value="">Selecione o emissor S1/S2...</option>
+                                    </select>
+                                    <div id="priv-emissor-warning" class="bank-eligibility-warning hidden"></div>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="priv-nome">Denominação / Identificador do Título <span class="required">*</span></label>
+                                    <input type="text" id="priv-nome" placeholder="Ex: CDB Bradesco Pré 13,5% a.a. — venc. 2027">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="priv-rentabilidade-tipo">Tipo de Rentabilidade</label>
+                                    <select id="priv-rentabilidade-tipo">
+                                        <option value="% CDI">% do CDI</option>
+                                        <option value="IPCA+">IPCA + spread</option>
+                                        <option value="Prefixada">Prefixada (% a.a.)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="priv-rentabilidade-val">Rentabilidade Pactuada <span class="required">*</span></label>
+                                    <input type="text" id="priv-rentabilidade-val" placeholder="Ex: 110 (% CDI) ou 5,80 (IPCA+)">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="priv-vencimento">Data de Vencimento <span class="required">*</span></label>
+                                    <input type="date" id="priv-vencimento">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="priv-data-inicio">Data de Início da Posição</label>
+                                    <input type="date" id="priv-data-inicio">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="priv-segmento">Segmento CMN 5.272</label>
+                                    <select id="priv-segmento">
+                                        <option value="Art. 7º III-a — RF Crédito Privado">Art. 7º III-a — RF Crédito Privado</option>
+                                        <option value="Art. 7º IV — Debêntures">Art. 7º IV — Debêntures</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="priv-fgc">Cobertura FGC</label>
+                                    <select id="priv-fgc">
+                                        <option value="Sim">Sim (até R$ 250.000 por instituição)</option>
+                                        <option value="Não">Não (Letra Financeira / LF acima de 2 anos)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="btn-add-priv">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                    Registrar Título Privado
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== FORMULÁRIO: EMPRÉSTIMOS CONSIGNADOS ========== -->
+                    <div class="asset-tab-panel hidden" id="panel-consignados">
+                        <div class="card-panel">
+                            <div class="alert alert-info" style="margin-bottom:16px;">
+                                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <div class="alert-content">
+                                    <strong>Integração via ConsigPrev (MOV-09):</strong> Os empréstimos consignados são gerenciados pelo módulo ConsigPrev e sincronizados automaticamente. Os dados abaixo são atualizados diariamente com posição do saldo devedor, rendimentos acumulados e taxa de inadimplência da carteira.
+                                </div>
+                            </div>
+                            <div class="consig-summary-grid" id="consig-summary-grid">
+                                <div class="consig-card">
+                                    <span class="consig-label">Saldo Devedor Total</span>
+                                    <span class="consig-val font-mono" id="consig-saldo">R$ 8.420.000,00</span>
+                                    <span class="consig-delta positive">↑ 1,2% este mês</span>
+                                </div>
+                                <div class="consig-card">
+                                    <span class="consig-label">Rendimento Acumulado (a.a.)</span>
+                                    <span class="consig-val font-mono" id="consig-rendimento">IPCA + 4,00%</span>
+                                    <span class="consig-delta positive">↑ 0,3 p.p. vs. benchmark</span>
+                                </div>
+                                <div class="consig-card">
+                                    <span class="consig-label">Taxa de Inadimplência</span>
+                                    <span class="consig-val font-mono" id="consig-inadimplencia">0,42%</span>
+                                    <span class="consig-delta positive">↓ abaixo da meta 1,0%</span>
+                                </div>
+                                <div class="consig-card">
+                                    <span class="consig-label">Contratos Ativos</span>
+                                    <span class="consig-val font-mono" id="consig-contratos">2.347</span>
+                                    <span class="consig-delta neutral">→ sem variação</span>
+                                </div>
+                            </div>
+                            <div class="form-actions" style="margin-top:16px;">
+                                <button type="button" class="btn btn-outline" id="btn-sync-consig">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                                    Sincronizar com ConsigPrev
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== REGISTROS CADASTRADOS ========== -->
+                    <div class="asset-registry-header">
+                        <h3>Ativos Registrados <span class="pill pill-success" id="asset-total-count">0 registros</span></h3>
+                        <div class="registry-filters">
+                            <select id="asset-filter-tipo" style="font-size:12px;padding:5px 10px;">
+                                <option value="">Todos os tipos</option>
+                                <option value="Fundo">Fundos</option>
+                                <option value="Título Público">Títulos Públicos</option>
+                                <option value="Título Privado">Títulos Privados</option>
+                                <option value="Consignado">Consignados</option>
+                            </select>
+                            <select id="asset-filter-status" style="font-size:12px;padding:5px 10px;">
+                                <option value="">Todos os status</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Resgatado">Resgatado</option>
+                                <option value="Vencido">Vencido</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-assets-registry">
+                            <thead>
+                                <tr>
+                                    <th style="width:90px;">Tipo</th>
+                                    <th>Denominação</th>
+                                    <th style="width:130px;">Segmento CMN</th>
+                                    <th style="width:110px;">Benchmark</th>
+                                    <th style="width:110px;">Vencimento</th>
+                                    <th style="width:80px;text-align:center;">Status</th>
+                                    <th style="width:70px;text-align:center;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assets-registry-list">
+                                <tr class="empty-state-row"><td colspan="7">Nenhum ativo cadastrado ainda. Use os formulários acima para adicionar.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= PASSO 6: VALIDAÇÃO FINAL E RELATÓRIO ================= -->
+            <div class="step-pane hidden" id="step-pane-6">
+                <div class="pane-header">
+                    <h2>Validação Final & Relatório de Status</h2>
+                    <p class="subtitle">O sistema analisou a carteira de ativos importada em relação aos limites regulatórios do CMN e às metas aprovadas na PAI. Verifique a conformidade abaixo antes de finalizar a ativação.</p>
+                </div>
+
+                <div class="wizard-form">
+                    <!-- Resumo dos Indicadores -->
+                    <div class="summary-grid">
+                        <div class="summary-status-card success">
+                            <span class="icon-circle">✓</span>
+                            <div class="status-details">
+                                <span class="val" id="summary-ok-count">0</span>
+                                <span class="lbl">Ativos Enquadrados</span>
+                            </div>
+                        </div>
+                        <div class="summary-status-card warning">
+                            <span class="icon-circle">!</span>
+                            <div class="status-details">
+                                <span class="val" id="summary-warn-count">0</span>
+                                <span class="lbl">Potencialmente Desenquadrados</span>
+                            </div>
+                        </div>
+                        <div class="summary-status-card danger">
+                            <span class="icon-circle">✗</span>
+                            <div class="status-details">
+                                <span class="val" id="summary-danger-count">0</span>
+                                <span class="lbl">Requerem Revisão Urgente</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Relatório de Enquadramento Completo -->
+                    <div class="report-box card-panel">
+                        <div class="report-title-bar">
+                            <h3>Relatório Técnico de Implantação e Enquadramento</h3>
+                            <button type="button" class="btn btn-outline btn-sm" id="btn-export-pdf">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10 9 9 9 8 9"/>
+                                </svg>
+                                Exportar Relatório (PDF)
+                            </button>
+                        </div>
+
+                        <!-- Metadados do Relatório -->
+                        <div class="report-meta font-mono">
+                            <div><strong>RPPS:</strong> <span id="report-rpps-name">-</span></div>
+                            <div><strong>CNPJ:</strong> <span id="report-rpps-cnpj">-</span></div>
+                            <div><strong>Ente Envolvido:</strong> <span id="report-rpps-ente">-</span></div>
+                            <div><strong>Nível Pró-Gestão:</strong> <span id="report-rpps-progestao">-</span></div>
+                            <div><strong>Data da Análise:</strong> <span id="report-current-date">17/08/2026</span></div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- Detalhamento de Irregularidades / Alertas -->
+                        <div class="report-alerts-section">
+                            <h4>Destaques de Desenquadramento e Ajustes Pendentes</h4>
+                            <div id="report-alerts-list">
+                                <!-- Dinâmico via JS -->
+                                <p class="text-muted">Nenhum alerta regulatório grave detectado. A carteira está em conformidade.</p>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- Conclusão de Implantação -->
+                        <div class="onboarding-completion-action">
+                            <h3>Concluir Implantação do Cliente</h3>
+                            <p>Ao finalizar, a carteira de ativos do cliente RPPS passará a ser monitorada ativamente em tempo real no dashboard operacional. Os convites de e-mail pendentes serão disparados imediatamente.</p>
+                            
+                            <div class="final-buttons-row">
+                                <button type="button" class="btn btn-success btn-lg" id="btn-finalize-onboarding">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                    Ativar Cliente e Iniciar Monitoramento
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer Geral do Wizard -->
+    <footer class="app-footer-controls">
+        <div class="footer-left">
+            <button class="btn btn-outline" id="btn-footer-back">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Voltar
+            </button>
+        </div>
+        <div class="footer-center">
+            <span class="step-progress-indicator-text">Passo <span id="current-step-indicator">1</span> de 6</span>
+        </div>
+        <div class="footer-right">
+            <button class="btn btn-primary" id="btn-footer-next">
+                <span>Salvar e Continuar</span>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Overlay de Sucesso Final -->
+    <div class="modal-overlay hidden" id="success-modal">
+        <div class="modal-card">
+            <div class="success-icon-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            <h2>Implantação Concluída com Sucesso!</h2>
+            <p>O cliente RPPS foi cadastrado no sistema e está 100% ativo. Todos os ativos foram vinculados aos planos e indexados no banco de dados.</p>
+            <div class="modal-stats font-mono">
+                <div><span>RPPS Cadastrado:</span> <strong id="modal-rpps-name">Previ-Cidade</strong></div>
+                <div><span>Ativos Importados:</span> <strong id="modal-rpps-assets">30 ativos</strong></div>
+                <div><span>Patrimônio Alocado:</span> <strong id="modal-rpps-equity">R$ 150.000.000,00</strong></div>
+                <div><span>Tempo Estimado de Trabalho:</span> <strong>3 horas e 45 minutos</strong></div>
+            </div>
+            <button class="btn btn-primary btn-full-width" id="btn-close-modal">Ir para o Dashboard Operacional</button>
+        </div>
+    </div>
+
+    <!-- Scripts da aplicação -->
+    <script src="app.js"></script>
+</body>
+</html>
